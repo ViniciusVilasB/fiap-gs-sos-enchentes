@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "fiap-gs-sos-enchentes",
-    "slug": "fiap-gs-sos-enchentes",
+    "name": "SOS Enchentes",
+    "slug": "sos-enchentes",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
