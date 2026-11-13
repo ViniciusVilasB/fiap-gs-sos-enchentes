@@ -1,17 +1,112 @@
-import { Text, View, StyleSheet } from "react-native";
+import { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { colors } from '../constants/colors';
+import { login } from '../services/auth';
 
-export default function Index() {
+export default function Login() {
+  const router = useRouter();
+  const { registered } = useLocalSearchParams<{ registered?: string }>();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function handleLogin() {
+    setError('');
+
+    if (!email || !password) {
+      setError('Preencha e-mail e senha');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await login(email, password);
+      router.replace('/home');
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>SOS Enchentes</Text>
+        <Text style={styles.subtitle}>Entre no app.</Text>
+      </View>
+
+      <View style={styles.form}>
+        <Text style={styles.label}>E-mail</Text>
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          placeholder="seu@email.com"
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <Text style={styles.label}>Senha</Text>
+        <TextInput
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Sua senha"
+          secureTextEntry
+        />
+
+        {registered === 'true' && !error ? (
+          <Text style={styles.success}>Conta criada! Agora é só entrar.</Text>
+        ) : null}
+
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>{loading ? 'Entrando...' : 'Entrar'}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.link}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          onPress={() => router.push('/register')}
+        >
+          <Text style={styles.linkText}>Não tem conta? Criar conta</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+  container: { flex: 1, backgroundColor: colors.background, padding: 24, justifyContent: 'center' },
+  header: { marginBottom: 32 },
+  title: { fontSize: 32, fontWeight: '800', color: colors.primary },
+  subtitle: { fontSize: 17, color: colors.textSecondary, marginTop: 8 },
+  form: { gap: 8 },
+  label: { fontSize: 16, fontWeight: '600', color: colors.text, marginTop: 8 },
+  input: {
+    backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border,
+    borderRadius: 12, padding: 14, fontSize: 17,
   },
+  success: { color: '#15803D', fontSize: 15, fontWeight: '600', marginTop: 8 },
+  error: { color: colors.sos, fontSize: 15, fontWeight: '600', marginTop: 8 },
+  button: {
+    backgroundColor: colors.primary, borderRadius: 14, minHeight: 56,
+    alignItems: 'center', justifyContent: 'center', marginTop: 24,
+  },
+  buttonDisabled: { opacity: 0.6 },
+  buttonText: { color: colors.white, fontSize: 18, fontWeight: '700' },
+  link: { alignItems: 'center', padding: 16 },
+  linkText: { color: colors.primary, fontSize: 16, fontWeight: '600' },
 });
