@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../constants/colors';
 import { login } from '../services/auth';
 
@@ -10,13 +11,14 @@ export default function Login() {
   const { registered } = useLocalSearchParams<{ registered?: string }>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
     setError('');
 
-    if (!email || !password) {
+    if (!email.trim() || !password) {
       setError('Preencha e-mail e senha');
       return;
     }
@@ -51,13 +53,28 @@ export default function Login() {
         />
 
         <Text style={styles.label}>Senha</Text>
-        <TextInput
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Sua senha"
-          secureTextEntry
-        />
+        <View style={styles.passwordInputContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Sua senha"
+            secureTextEntry={!passwordVisible}
+          />
+          <TouchableOpacity
+            style={styles.passwordToggle}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={passwordVisible ? 'Ocultar senha' : 'Mostrar senha'}
+            onPress={() => setPasswordVisible((visible) => !visible)}
+          >
+            <Ionicons
+              name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
+              size={22}
+              color={colors.textSecondary}
+            />
+          </TouchableOpacity>
+        </View>
 
         {registered === 'true' && !error ? (
           <Text style={styles.success}>Conta criada! Agora é só entrar.</Text>
@@ -98,6 +115,14 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border,
     borderRadius: 12, padding: 14, fontSize: 17,
+  },
+  passwordInputContainer: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: colors.white,
+    borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingLeft: 14,
+  },
+  passwordInput: { flex: 1, paddingVertical: 14, fontSize: 17 },
+  passwordToggle: {
+    minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center',
   },
   success: { color: '#15803D', fontSize: 15, fontWeight: '600', marginTop: 8 },
   error: { color: colors.sos, fontSize: 15, fontWeight: '600', marginTop: 8 },

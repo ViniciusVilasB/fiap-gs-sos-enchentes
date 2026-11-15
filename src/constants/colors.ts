@@ -14,6 +14,14 @@ export const colors = {
   primary: '#1D4ED8',
   sos: '#B91C1C',
 
+  // snackbar
+  snackbarSuccess: '#15803D',
+  snackbarError: '#B91C1C',
+  snackbarWarning: '#F59E0B',
+  snackbarInfo: '#1D4ED8',
+  snackbarText: '#FFFFFF',
+  snackbarWarningText: '#431407',
+
   // flood alert
   alertBackground: '#FFF4E5',
   alertBorder: '#F59E0B',
