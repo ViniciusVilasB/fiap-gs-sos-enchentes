@@ -46,7 +46,7 @@ export default function RegisterHealth() {
     setLoading(true);
     try {
       await register({ mobilityLevel, livesAlone, healthConditions });
-      router.replace({ pathname: "/", params: { registered: "true" } });
+      router.replace("/home");
     } catch (e) {
       setSnackbar({
         text:

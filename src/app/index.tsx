@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../constants/colors';
 import { login } from '../services/auth';
 
 export default function Login() {
   const router = useRouter();
-  const { registered } = useLocalSearchParams<{ registered?: string }>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -76,10 +75,6 @@ export default function Login() {
           </TouchableOpacity>
         </View>
 
-        {registered === 'true' && !error ? (
-          <Text style={styles.success}>Conta criada! Agora é só entrar.</Text>
-        ) : null}
-
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         <TouchableOpacity
@@ -124,7 +119,6 @@ const styles = StyleSheet.create({
   passwordToggle: {
     minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center',
   },
-  success: { color: '#15803D', fontSize: 15, fontWeight: '600', marginTop: 8 },
   error: { color: colors.sos, fontSize: 15, fontWeight: '600', marginTop: 8 },
   button: {
     backgroundColor: colors.primary, borderRadius: 14, minHeight: 56,
