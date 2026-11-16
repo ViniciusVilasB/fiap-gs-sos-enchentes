@@ -1,26 +1,58 @@
-import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ScrollView, View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { colors } from '../../constants/colors';
-import { getLoggedUser, logout } from '../../services/auth';
+import { logout } from '../../services/auth';
+import { getProfile, UserProfile } from '../../services/user';
+import { MOBILITY_LEVELS } from '../../constants/healthProfile';
+
+function getMobilityLabel(level: number) {
+  const found = MOBILITY_LEVELS.find((item) => item.value === level);
+  if (!found) return 'Não informado';
+  return found.title.split(' — ')[1] ?? found.title;
+}
 
 export default function Profile() {
   const router = useRouter();
-  const user = getLoggedUser();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const profileData = [
-    { label: 'Nome', value: user?.name ?? '-' },
-    { label: 'E-mail', value: user?.email ?? '-' },
-    { label: 'Idade', value: '78 anos' },
-    { label: 'Mobilidade', value: 'Usa cadeira de rodas' },
-    { label: 'Saúde', value: 'Pressão alta' },
-    { label: 'Mora sozinha?', value: 'Sim' },
-  ];
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const data = await getProfile();
+        setProfile(data);
+      } catch (e) {
+        setError((e as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProfile();
+  }, []);
 
   function handleLogout() {
     logout();
     router.replace('/');
   }
+
+  const health = profile?.healthProfile;
+  const profileData = profile
+    ? [
+        { label: 'Nome', value: profile.name },
+        { label: 'E-mail', value: profile.email },
+        { label: 'Telefone', value: profile.phoneNumber || '-' },
+        { label: 'Idade', value: profile.age ? `${profile.age} anos` : '-' },
+        { label: 'Mobilidade', value: health ? getMobilityLabel(health.mobilityLevel) : '-' },
+        { label: 'Mora sozinho(a)?', value: health ? (health.livesAlone ? 'Sim' : 'Não') : '-' },
+        {
+          label: 'Condições de saúde',
+          value: health?.healthConditions.length ? health.healthConditions.join(', ') : 'Nenhuma',
+        },
+      ]
+    : [];
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -33,14 +65,20 @@ export default function Profile() {
           </Text>
         </View> */}
 
-        <View style={styles.list}>
-          {profileData.map((item, i) => (
-            <View key={item.label} style={[styles.row, i < profileData.length - 1 && styles.rowBorder]}>
-              <Text style={styles.rowLabel}>{item.label}</Text>
-              <Text style={styles.rowValue}>{item.value}</Text>
-            </View>
-          ))}
-        </View>
+        {loading ? (
+          <ActivityIndicator size="large" color={colors.primary} />
+        ) : error ? (
+          <Text style={styles.error}>{error}</Text>
+        ) : (
+          <View style={styles.list}>
+            {profileData.map((item, i) => (
+              <View key={item.label} style={[styles.row, i < profileData.length - 1 && styles.rowBorder]}>
+                <Text style={styles.rowLabel}>{item.label}</Text>
+                <Text style={styles.rowValue}>{item.value}</Text>
+              </View>
+            ))}
+          </View>
+        )}
 
         <TouchableOpacity
           style={styles.logout}
@@ -61,6 +99,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: '700', color: colors.text },
   info: { backgroundColor: colors.infoBackground, borderRadius: 12, padding: 14 },
   infoText: { fontSize: 14, color: colors.infoText },
+  error: { color: colors.sos, fontSize: 15, fontWeight: '600' },
   list: { backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.border },
   row: { paddingVertical: 14, paddingHorizontal: 16, gap: 2 },
   rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.divider },
