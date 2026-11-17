@@ -183,3 +183,7 @@ export function logout() {
   loggedUser = null;
   authToken = null;
 }
+
+export function setLoggedUser(user: LoggedUser) {
+  loggedUser = user;
+}

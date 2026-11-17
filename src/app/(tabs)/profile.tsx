@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { Href, useFocusEffect, useRouter } from 'expo-router';
 import { colors } from '../../constants/colors';
 import { logout } from '../../services/auth';
 import { getProfile, UserProfile } from '../../services/user';
@@ -19,19 +19,29 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    async function loadProfile() {
-      try {
-        const data = await getProfile();
-        setProfile(data);
-      } catch (e) {
-        setError((e as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadProfile();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+
+      getProfile()
+        .then((data) => {
+          if (active) {
+            setProfile(data);
+            setError('');
+          }
+        })
+        .catch((e) => {
+          if (active) setError((e as Error).message);
+        })
+        .finally(() => {
+          if (active) setLoading(false);
+        });
+
+      return () => {
+        active = false;
+      };
+    }, []),
+  );
 
   function handleLogout() {
     logout();
@@ -81,6 +91,15 @@ export default function Profile() {
         )}
 
         <TouchableOpacity
+          style={styles.edit}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          onPress={() => router.push('/edit-profile' as Href)}
+        >
+          <Text style={styles.editText}>Editar perfil</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
           style={styles.logout}
           activeOpacity={0.7}
           accessibilityRole="button"
@@ -110,4 +129,9 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', marginTop: 8,
   },
   logoutText: { color: colors.sos, fontSize: 17, fontWeight: '700' },
+  edit: {
+    minHeight: 52, borderRadius: 14, backgroundColor: colors.primary,
+    alignItems: 'center', justifyContent: 'center', marginTop: 8,
+  },
+  editText: { color: colors.white, fontSize: 17, fontWeight: '700' },
 });
