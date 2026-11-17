@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../constants/colors';
 import { login } from '../services/auth';
@@ -24,8 +24,8 @@ export default function Login() {
 
     setLoading(true);
     try {
-      await login(email, password);
-      router.replace('/home');
+      const user = await login(email, password);
+      router.replace((user.isAdmin ? '/rescue-queue' : '/home') as Href);
     } catch (e) {
       setError((e as Error).message);
     } finally {

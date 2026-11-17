@@ -13,6 +13,7 @@ import { colors } from "../../constants/colors";
 import { MOBILITY_LEVELS } from "../../constants/healthProfile";
 import { logout } from "../../services/auth";
 import { getProfile, UserProfile } from "../../services/user";
+import { formatPhoneNumber } from '../../utils/format';
 
 function getMobilityLabel(level: number) {
   const found = MOBILITY_LEVELS.find((item) => item.value === level);
@@ -60,7 +61,7 @@ export default function Profile() {
     ? [
         { label: "Nome", value: profile.name },
         { label: "E-mail", value: profile.email },
-        { label: "Telefone", value: profile.phoneNumber || "-" },
+        { label: 'Telefone', value: profile.phoneNumber ? formatPhoneNumber(profile.phoneNumber) : '-' },
         { label: "Idade", value: profile.age ? `${profile.age} anos` : "-" },
         {
           label: "Mobilidade",

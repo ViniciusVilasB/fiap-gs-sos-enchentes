@@ -1,6 +1,6 @@
 import { isValidEmail, isValidPhoneNumber } from "../utils/validation";
 
-type LoggedUser = { id: number; name: string; email: string };
+type LoggedUser = { id: number; name: string; email: string; isAdmin: boolean };
 
 export type HealthProfileRequest = {
   mobilityLevel: number;
@@ -77,7 +77,8 @@ export async function login(email: string, password: string) {
 
   const token = readProperty(body, "token", "Token");
   authToken = typeof token === "string" ? token : null;
-  loggedUser = { id: user.id, name: user.name, email: user.email };
+  const isAdmin = 'isAdmin' in user && user.isAdmin === true;
+  loggedUser = { id: user.id, name: user.name, email: user.email, isAdmin };
   return loggedUser;
 }
 

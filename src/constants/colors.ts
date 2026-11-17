@@ -32,4 +32,15 @@ export const colors = {
   // info box
   infoBackground: '#EFF6FF',
   infoText: '#1E3A8A',
+
+  // rescue priority
+  priorityHighBackground: '#FEE2E2',
+  priorityHighText: '#991B1B',
+  priorityHighBorder: '#FCA5A5',
+  priorityMediumBackground: '#FFEDD5',
+  priorityMediumText: '#9A3412',
+  priorityMediumBorder: '#FCD34D',
+  priorityLowBackground: '#E2E8F0',
+  priorityLowText: '#334155',
+  tagBackground: '#F1F5F9',
 };
