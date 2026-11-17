@@ -1,4 +1,4 @@
-import { isValidEmail, isValidPhoneNumber } from '../utils/validation';
+import { isValidEmail, isValidPhoneNumber } from "../utils/validation";
 
 type LoggedUser = { id: number; name: string; email: string };
 
@@ -27,54 +27,56 @@ let authToken: string | null = null;
 
 export async function login(email: string, password: string) {
   if (!email.trim() || !password) {
-    throw new Error('Preencha e-mail e senha');
+    throw new Error("Preencha e-mail e senha");
   }
 
   if (!isValidEmail(email)) {
-    throw new Error('Informe um e-mail válido');
+    throw new Error("Informe um e-mail válido");
   }
 
-  const response = await fetch('https://localhost:7272/api/user/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("https://localhost:7272/api/user/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: email.trim(), password }),
   });
 
   if (!response.ok) {
-    throw new Error(await getResponseErrorMessage(response, 'E-mail ou senha inválidos'));
-  }
-
-  const body: unknown = await response.json();
-  if (typeof body !== 'object' || body === null) {
-    throw new Error('Resposta inválida do servidor ao entrar');
-  }
-
-  const success = readProperty(body, 'success', 'Success');
-  const message = readProperty(body, 'message', 'Message');
-  if (success !== true) {
     throw new Error(
-      typeof message === 'string' && message
-        ? message
-        : 'Não foi possível entrar'
+      await getResponseErrorMessage(response, "E-mail ou senha inválidos"),
     );
   }
 
-  const user = readProperty(body, 'user', 'User');
-  if (
-    typeof user !== 'object' ||
-    user === null ||
-    !('id' in user) ||
-    typeof user.id !== 'number' ||
-    !('name' in user) ||
-    typeof user.name !== 'string' ||
-    !('email' in user) ||
-    typeof user.email !== 'string'
-  ) {
-    throw new Error('Resposta inválida do servidor ao entrar');
+  const body: unknown = await response.json();
+  if (typeof body !== "object" || body === null) {
+    throw new Error("Resposta inválida do servidor ao entrar");
   }
 
-  const token = readProperty(body, 'token', 'Token');
-  authToken = typeof token === 'string' ? token : null;
+  const success = readProperty(body, "success", "Success");
+  const message = readProperty(body, "message", "Message");
+  if (success !== true) {
+    throw new Error(
+      typeof message === "string" && message
+        ? message
+        : "Não foi possível entrar",
+    );
+  }
+
+  const user = readProperty(body, "user", "User");
+  if (
+    typeof user !== "object" ||
+    user === null ||
+    !("id" in user) ||
+    typeof user.id !== "number" ||
+    !("name" in user) ||
+    typeof user.name !== "string" ||
+    !("email" in user) ||
+    typeof user.email !== "string"
+  ) {
+    throw new Error("Resposta inválida do servidor ao entrar");
+  }
+
+  const token = readProperty(body, "token", "Token");
+  authToken = typeof token === "string" ? token : null;
   loggedUser = { id: user.id, name: user.name, email: user.email };
   return loggedUser;
 }
@@ -86,23 +88,23 @@ export function saveRegistrationDetails(details: RegistrationDetails) {
     !details.password ||
     !details.phoneNumber.trim()
   ) {
-    throw new Error('Preencha todos os campos');
+    throw new Error("Preencha todos os campos");
   }
 
   if (!isValidEmail(details.email)) {
-    throw new Error('Informe um e-mail válido');
+    throw new Error("Informe um e-mail válido");
   }
 
   if (!isValidPhoneNumber(details.phoneNumber)) {
-    throw new Error('Informe um telefone válido com DDD');
+    throw new Error("Informe um telefone válido com DDD");
   }
 
   if (details.password.length < 6) {
-    throw new Error('A senha precisa ter pelo menos 6 caracteres');
+    throw new Error("A senha precisa ter pelo menos 6 caracteres");
   }
 
   if (!Number.isInteger(details.age) || details.age < 1 || details.age > 120) {
-    throw new Error('Informe uma idade válida');
+    throw new Error("Informe uma idade válida");
   }
 
   registrationDraft = {
@@ -116,21 +118,26 @@ export function saveRegistrationDetails(details: RegistrationDetails) {
 
 export async function register(healthProfile: HealthProfileRequest) {
   if (!registrationDraft) {
-    throw new Error('Os dados do cadastro não foram encontrados. Recomece o cadastro.');
+    throw new Error(
+      "Os dados do cadastro não foram encontrados. Recomece o cadastro.",
+    );
   }
 
   const details = registrationDraft;
   if (!registrationSubmitted) {
     const request: RegisterRequest = { ...details, healthProfile };
-    const response = await fetch('https://localhost:7272/api/user/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("https://localhost:7272/api/user/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(request),
     });
 
     if (!response.ok) {
       throw new Error(
-        await getResponseErrorMessage(response, `Não foi possível cadastrar (HTTP ${response.status})`)
+        await getResponseErrorMessage(
+          response,
+          `Não foi possível cadastrar (HTTP ${response.status})`,
+        ),
       );
     }
 
@@ -142,12 +149,18 @@ export async function register(healthProfile: HealthProfileRequest) {
   registrationSubmitted = false;
 }
 
-function readProperty(value: object, camelCase: string, pascalCase: string): unknown {
+function readProperty(
+  value: object,
+  camelCase: string,
+  pascalCase: string,
+): unknown {
   if (camelCase in value) {
     return (value as Record<string, unknown>)[camelCase];
   }
 
-  return pascalCase in value ? (value as Record<string, unknown>)[pascalCase] : undefined;
+  return pascalCase in value
+    ? (value as Record<string, unknown>)[pascalCase]
+    : undefined;
 }
 
 async function getResponseErrorMessage(response: Response, fallback: string) {
@@ -158,9 +171,9 @@ async function getResponseErrorMessage(response: Response, fallback: string) {
 
   try {
     const body: unknown = JSON.parse(responseText);
-    if (typeof body === 'object' && body !== null) {
-      const message = readProperty(body, 'message', 'Message');
-      if (typeof message === 'string') {
+    if (typeof body === "object" && body !== null) {
+      const message = readProperty(body, "message", "Message");
+      if (typeof message === "string") {
         return message;
       }
     }
@@ -176,6 +189,9 @@ export function getLoggedUser() {
 }
 
 export function getAuthToken() {
+  if (!authToken) {
+    throw new Error("Sessão expirada. Faça login novamente.");
+  }
   return authToken;
 }
 

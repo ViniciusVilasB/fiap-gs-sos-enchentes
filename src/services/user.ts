@@ -1,7 +1,7 @@
 import { getAuthToken, setLoggedUser } from './auth';
 import { isValidPhoneNumber } from '../utils/validation';
 
-const API_URL = 'https://localhost:7272';
+const API_URL = 'https://localhost:7272/api';
 
 export type HealthProfile = {
   id: number;
@@ -16,16 +16,13 @@ export type UserProfile = {
   name: string;
   age: number;
   phoneNumber: string;
-  healthProfile: HealthProfile | null;
+  healthProfile: HealthProfile | null;  
 };
 
 export async function getProfile(): Promise<UserProfile> {
   const token = getAuthToken();
-  if (!token) {
-    throw new Error('Sessão expirada. Faça login novamente.');
-  }
 
-  const response = await fetch(`${API_URL}/api/user/me`, {
+  const response = await fetch(`${API_URL}/user `, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -73,7 +70,7 @@ export async function updateProfile(data: UpdateProfileRequest): Promise<UserPro
     throw new Error('Sessão expirada. Faça login novamente.');
   }
 
-  const response = await fetch(`${API_URL}/api/user/me`, {
+  const response = await fetch(`${API_URL}/api/user`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

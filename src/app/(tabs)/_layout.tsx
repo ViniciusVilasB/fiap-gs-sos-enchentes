@@ -16,14 +16,21 @@ export default function TabsLayout() {
         name="home"
         options={{
           title: 'Início',
-          tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" color={color ?? undefined} size={size} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" color={typeof color === 'number' || color === null ? undefined : color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="contacts"
+        options={{
+          title: 'Contatos',
+          tabBarIcon: ({ color, size }) => <Ionicons name="people-outline" color={typeof color === 'number' || color === null ? undefined : color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" color={color ?? undefined} size={size} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" color={typeof color === 'number' || color === null ? undefined : color} size={size} />,
         }}
       />
     </Tabs>
