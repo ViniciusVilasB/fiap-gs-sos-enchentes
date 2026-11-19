@@ -10,15 +10,13 @@ export default function TabsLayout() {
 
   useEffect(() => {
     const disconnect = connectToAlerts({
-      // Se já tem um pop-up aberto, não abre outro por cima
       onAlert: (newAlert) => setAlert((current) => current ?? newAlert),
-      // A água baixou: fecha o pop-up
       onCleared: () => setAlert(null),
     });
     return disconnect;
   }, []);
-  
-    return (
+
+  return (
     <>
       <Tabs
         screenOptions={{
@@ -36,6 +34,13 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'Perfil',
+            tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" color={typeof color === 'number' || color === null ? undefined : color} size={size} />,
+          }}
+        />
+        <Tabs.Screen
           name="contacts"
           options={{
             title: 'Contatos',
@@ -43,10 +48,10 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name="profile"
+          name="dependents"
           options={{
-            title: 'Perfil',
-            tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" color={typeof color === 'number' || color === null ? undefined : color} size={size} />,
+            title: 'Dependentes',
+            tabBarIcon: ({ color, size }) => <Ionicons name="people-circle-outline" color={typeof color === 'number' || color === null ? undefined : color} size={size} />,
           }}
         />
       </Tabs>
