@@ -1,56 +1,186 @@
-# Welcome to your Expo app 👋
+# SOS Enchentes
+Aplicativo mobile desenvolvido como parte da **Global Solution da FIAP**, com foco em prevenção, monitoramento e resposta a situações de risco relacionadas a enchentes.
+A proposta do aplicativo **SOS Enchentes** é aproximar informações sobre condições de risco para a população, permitindo acompanhar situações relacionadas a enchentes e receber informações que podem auxiliar na tomada de decisão em momentos críticos.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Objetivo do projeto
+Enchentes e alagamentos podem causar grandes impactos à população, especialmente quando as pessoas não tem acesso rápido a informações sobre as condições de risco da sua região.
+O SOS Enchentes busca utilizar tecnologia para tornar essas informações mais acessíveis, oferecendo uma aplicação mobile capaz de centralizar dados e alertas relacionados a situações de emergência.
 
-## Get started
+### Principais objetivos
+- Facilitar o acesso a informações sobre condições de chuva e enchentes;
+- Apoiar a população na identificação de situações de risco;
+- Disponibilizar informações de forma contextualizada;
+- Oferecer uma interface simples e acessível para dispositivos móveis;
+- Permitir comunicação e atualização de informações em tempo real.
 
-1. Install dependencies
+## Funcionalidades
+A aplicação foi desenvolvida para dispositivos mobile utilizando React Native e Expo.
+Os recursos previstos são:
 
-   ```bash
-   npm install
-   ```
+- Monitoramento de informações relacionadas a enchentes;
+- Visualização de informações de risco;
+- Recebimento de atualizações em tempo real;
+- Interface mobile para consulta das informações;
+- Integração com serviços externos através de comunicação em tempo real;
+- Navegação entre as diferentes funcionalidades da aplicação.
 
-2. Start the app
+## Arquitetura
+O projeto utiliza uma arquitetura baseada em **React Native + Expo**, com organização das telas utilizando **Expo Router**.
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+┌─────────────────────────────┐
+│        Aplicativo Mobile    │
+│       React Native / Expo   │
+└──────────────┬──────────────┘
+               │
+               │ Comunicação
+               │ em tempo real
+               ▼
+┌─────────────────────────────┐
+│          SignalR            │
+│   @microsoft/signalr        │
+└──────────────┬──────────────┘
+               │
+               ▼
+┌─────────────────────────────┐
+│       Serviços / API        │
+│     Dados de enchentes      │
+└─────────────────────────────┘
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+A comunicação em tempo real utiliza a biblioteca [`@microsoft/signalr`](https://www.npmjs.com/package/@microsoft/signalr), permitindo que o aplicativo receba atualizações sem depender exclusivamente de requisições periódicas.
 
-### Other setup steps
+## Estrutura do projeto
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```text
+fiap-gs-sos-enchentes/
+│
+├── assets/              # Imagens e recursos estáticos
+│
+├── src/
+│   └── app/             # Telas e rotas da aplicação
+│
+├── .vscode/             # Configurações do VS Code
+│
+├── app.json             # Configurações do Expo
+├── eslint.config.js     # Configuração do ESLint
+├── package.json         # Dependências e scripts
+├── package-lock.json    # Versões das dependências
+├── tsconfig.json        # Configuração do TypeScript
+├── LICENSE              # Licença do projeto
+└── README.md            # Documentação
+```
 
-## Learn more
+## Como executar
 
-To learn more about developing your project with Expo, look at the following resources:
+### Pré-requisitos
+Antes de iniciar, certifique-se de ter instalado:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- [Node.js](https://nodejs.org/)
+- npm
+- Expo CLI / ferramentas do Expo
+- Android Studio, para utilizar um emulador Android, ou
+- Expo Go em um dispositivo físico
 
-## Join the community
+### 1. Clone o repositório
+```bash
+git clone https://github.com/ViniciusVilasB/fiap-gs-sos-enchentes.git
+```
 
-Join our community of developers creating universal apps.
+Entre na pasta do projeto:
+```bash
+cd fiap-gs-sos-enchentes
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 2. Instale as dependências
+```bash
+npm install
+```
+
+### 3. Inicie o projeto
+```bash
+npx expo start
+```
+
+Depois de iniciar, o Expo disponibilizará as opções para executar o projeto em diferentes ambientes.
+
+### Android
+```bash
+npm run android
+```
+
+### iOS
+```bash
+npm run ios
+```
+
+### Web
+```bash
+npm run web
+```
+
+## Comunicação em tempo real
+
+Um dos componentes importantes da aplicação é a utilização do **SignalR**.
+
+A biblioteca permite estabelecer uma conexão persistente entre o aplicativo e o serviço responsável pelos dados, possibilitando o recebimento de atualizações em tempo real.
+
+Fluxo simplificado:
+
+```text
+Evento / atualização
+        │
+        ▼
+     Backend
+        │
+        │ SignalR
+        ▼
+Aplicativo Mobile
+        │
+        ▼
+Atualização da interface
+```
+
+Essa abordagem é muito útil para cenários de emergência, nos quais informações sobre condições de risco podem mudar rapidamente.
+
+## O impacto social
+
+O projeto está alinhado à utilização de tecnologia para prevenção e redução dos impactos causados por desastres naturais.
+
+A solução busca contribuir principalmente para:
+
+- maior acesso à informação;
+- conscientização sobre riscos;
+- tomada de decisão mais rápida;
+- comunicação de situações de emergência;
+- utilização de tecnologia em benefício da população.
+
+O projeto também se relaciona diretamente ao conceito de **cidades mais resilientes e sustentáveis**, especialmente no contexto de eventos climáticos extremos.
+
+## ODS — Objetivos de Desenvolvimento Sustentável
+Esse projeto contribui para alguns dos Objetivos de Desenvolvimento Sustentável da **ONU**, principalmente:
+
+- **ODS 11 — Cidades e Comunidades Sustentáveis:** contribui para cidades mais seguras e resilientes ao facilitar o acesso a informações sobre enchentes e situações de risco.
+- **ODS 13 — Ação Contra a Mudança Global do Clima:** apoia a prevenção e resposta aos impactos de eventos climáticos extremos.
+- **ODS 9 — Indústria, Inovação e Infraestrutura:** utiliza tecnologias como aplicações mobile e comunicação em tempo real para desenvolver uma solução inovadora para um problema social.
+
+## O impacto social
+O projeto está alinhado à utilização de tecnologia para prevenção e redução dos impactos causados por desastres naturais.
+
+A solução busca contribuir principalmente para:
+- maior acesso à informação;
+- conscientização sobre riscos;
+- tomada de decisão mais rápida;
+- comunicação de situações de emergência;
+- utilização de tecnologia em benefício da população.
+
+O projeto também se relaciona diretamente ao conceito de **cidades mais resilientes e sustentáveis**, especialmente no contexto de eventos climáticos extremos.
+
+## Equipe
+
+| Integrante | RM |
+|---|---|
+| Vinicius Vilas Boas | 557843 |
+| Milena Costa | 555111 |
+| Renan Gonçalves | 555584 |
+| Gustavo Luni | 558096 |
