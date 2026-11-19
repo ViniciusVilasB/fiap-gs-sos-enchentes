@@ -176,6 +176,12 @@ A solução busca contribuir principalmente para:
 
 O projeto também se relaciona diretamente ao conceito de **cidades mais resilientes e sustentáveis**, especialmente no contexto de eventos climáticos extremos.
 
+##Prints de tela
+<img width="984" height="628" alt="image" src="https://github.com/user-attachments/assets/b2fcdce5-b86c-45a8-a7c8-d28107ce6349" />
+<img width="954" height="622" alt="image" src="https://github.com/user-attachments/assets/0fa14413-4d45-461c-99d8-2f4ea8360075" />
+<img width="943" height="636" alt="image" src="https://github.com/user-attachments/assets/71a3120f-8c0d-4798-a648-52a04e31d429" />
+<img width="352" height="698" alt="image" src="https://github.com/user-attachments/assets/36a7891a-7951-409f-90fd-4b3587eaff6f" />
+
 ## Equipe
 
 | Integrante | RM |
